@@ -7,7 +7,7 @@ interface Location {
     location_name: string;
 }
 
-interface SurvivolItems {
+interface SurvivalItems {
     item_id: number;
     item_name: string;
     category: string;
@@ -20,12 +20,38 @@ interface SurvivolItems {
 const country_api = "https://restcountries.com/v3.1/all";
 const items_api = "https://fakestoreapi.com/products"
 
-axios.get(country_api)
-  .then(response => console.log(response.data));
+// axios.get(country_api)
+//   .then(response => console.log(response.data));
 
-async function GetItems(): Promise<SurvivolItems[]> {
-    
-    return [];
+async function GetItems(locations: Location[]) {
+    try {
+        const res = await fetch(items_api); 
+
+        if (!res.ok) {
+            throw new Error(`API call failed with status: ${res.status}`);
+        }
+
+        const json = await res.json(); 
+        
+        const items = json.map((p, index) => {
+            return {
+                item_id: p.id || index, // Use the original ID or the index as a fallback
+                item_name: p.title,
+                category: p.category,
+                durability: Math.floor((p.rating.count / 1000) * 60),
+                zombie_effectivenss: Math.floor(Math.random()*10),
+                location: GetRandomLocation(locations),
+                rarity: p.rating.rate,        
+            };
+        });
+
+        console.log("Generated Items:", items);
+        return items;
+
+    } catch (error) {
+        console.error("Failed to fetch or process items:", error);
+        return [];
+    }
 }
 
 async function GetLocations(): Promise<Location[]> {
@@ -33,11 +59,35 @@ async function GetLocations(): Promise<Location[]> {
     return [];
 }
 
+function GetRandomLocation(locations: Location[]): Location {
+    if (!locations || locations.length === 0) {
+        console.error("The array is empty. Cannot get a random item.");
+        return null;
+    }
+
+    const randomIndex = Math.floor(Math.random() * locations.length);
+
+    return locations[randomIndex];
+}
+
 function CreateDB() {
-
+// SQL STATEMNTS TO CREATE THE DB
 }
 
-function PopulateDB(loations: Location[], items: SurvivolItems[]){
-
+function PopulateDB(loations: Location[], items: SurvivalItems[]){
+// RUN SQL STATEMENTS WITHIN A FOR EACH ON EACH ARRAY 
 }
+
+(async () => {
+    console.log("Starting game item generation...");
+    const locations = await GetLocations();
+
+    if (locations.length > 0) {
+        const gameItems = await GetItems(locations);
+        console.log("Successfully generated", gameItems.length, "game items.");
+        console.log(gameItems);
+    } else {
+        console.error("No locations found. Cannot generate items.");
+    }
+})();
 

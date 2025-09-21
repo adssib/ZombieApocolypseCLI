@@ -5,10 +5,10 @@
 item_id integer
 item_name string
 category string 
-durability integer (1 to 10)
-zombie_effictivness integer (1 to 10)
+durability integer (1 to 10) TAKEN FROM COUNT
+zombie_effictivness integer (1 to 10) RANDOM
 location 
-rarity (1 to 5)
+rarity (1 to 5) TAKEN FROM RATE
 
 ### Location Class
 
