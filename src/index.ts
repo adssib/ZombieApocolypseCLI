@@ -111,6 +111,8 @@ async function CreateDB(db: any) {
         );
     `);
     console.log("Table 'items' created successfully.");
+
+    // TO-DO add the other TABLE
 }
 
 async function getDatabase() {
@@ -145,5 +147,13 @@ function PopulateDB(locations: Location[], items: SurvivalItems[]){
     } else {
         console.error("No locations found. Cannot generate items.");
     }
+
+    // CREATE DB
+    // GET DB
+    // POPULATE DB with the 2 above arrays
+
+    // RUN IN INFINITE LOOP
+
+    // CATCH STATEMENTS and run logic for the SQL statements
 })();
 
