@@ -13,12 +13,12 @@ rarity (1 to 5) TAKEN FROM RATE
 ### Location Class
 
 location_id
-zombie_count
-medical_supplies
-location_type
+zombie_count GOT IT FROM POPULATION
+medical_supplies RANDOM 
 
 ### Things to add after the MVP
 
+location_type 
 make rarity a String (another table in the DB)
 is_silent
 kills_count

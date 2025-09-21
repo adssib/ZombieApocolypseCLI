@@ -1,4 +1,5 @@
-import axios from 'axios';
+import sqlite3 from 'sqlite3';
+import { open } from 'sqlite';
 
 interface Location {
     location_id: number;
@@ -55,7 +56,30 @@ async function GetItems(locations: Location[]) {
 }
 
 async function GetLocations(): Promise<Location[]> {
-    
+        try {
+        const res = await fetch(country_api); 
+
+        if (!res.ok) {
+            throw new Error(`API call failed with status: ${res.status}`);
+        }
+
+        const json = await res.json(); 
+        
+        const locations = json.map((p, index) => {
+            return {
+                location_id: p.id || index,
+                zombie_count: Math.floor(p.population /100000),
+                medical_supplies: Math.floor(Math.random() * 10), 
+            };
+        });
+
+        console.log("Generated Items:", locations);
+        return locations;
+
+    } catch (error) {
+        console.error("Failed to fetch or process items:", error);
+        return [];
+    }
     return [];
 }
 
@@ -70,12 +94,44 @@ function GetRandomLocation(locations: Location[]): Location {
     return locations[randomIndex];
 }
 
-function CreateDB() {
+async function CreateDB(db: any) {
 // SQL STATEMNTS TO CREATE THE DB
+// RUN SQL STATEMENTS WITHIN A FOR EACH ON EACH ARRAY 
+    console.log("Creating 'items' table if it doesn't exist...");
+    await db.exec(`
+        CREATE TABLE IF NOT EXISTS items (
+            item_id INTEGER PRIMARY KEY,
+            item_name TEXT,
+            category TEXT,
+            durability INTEGER,
+            zombie_effectiveness INTEGER,
+            location_id INTEGER,
+            location_name TEXT,
+            rarity INTEGER
+        );
+    `);
+    console.log("Table 'items' created successfully.");
 }
 
-function PopulateDB(loations: Location[], items: SurvivalItems[]){
-// RUN SQL STATEMENTS WITHIN A FOR EACH ON EACH ARRAY 
+async function getDatabase() {
+    const db = await open({
+        filename: './survival_items.db',
+        driver: sqlite3.Database
+    });
+    console.log("Database 'survival_items.db' opened and connected.");
+    return db;
+}
+
+function PopulateDB(locations: Location[], items: SurvivalItems[]){
+    locations.forEach(element => {
+       //RUN SCRIPT TO POPULATE DB ON EACH TABLE 
+    });
+
+    items.forEach(elements =>{
+        //RUN SCRIPT TO POPULATE DB ON EACH TABLE
+
+        // INSERT INTO items (item_id, item_na.....) VALUES(.....)
+    });
 }
 
 (async () => {
